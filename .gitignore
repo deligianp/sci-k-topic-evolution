@@ -1,0 +1,11 @@
+# Ignore migrations
+**/migrations/
+
+# Ignore local
+**/local_settings.py
+
+# PyCharm files
+**/.idea/
+
+# pycache
+**/__pycache__/

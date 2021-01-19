@@ -1,0 +1,22 @@
+{% extends "topic_evolution_visualization/content-template.html" %}
+{% block page_title %}
+    Browse topics
+{% endblock %}
+{% block main_content %}
+    <h3>Topics for model "{{ model.description }}"
+        {% if model.training_context and model.training_context != "" %}
+        <sup>
+            <i class="fas fa-info-circle"
+                data-toggle="tooltip"
+                data-html="true"
+                data-placement="bottom"
+                title="{{ model.training_context }}"></i>
+        </sup>
+        {% endif %}
+    </h3>
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
+{% endblock %}
