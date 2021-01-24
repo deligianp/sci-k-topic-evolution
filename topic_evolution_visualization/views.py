@@ -320,29 +320,27 @@ def home(request):
 #     return render(context=template_context, template_name='p_topic.html', request=request)
 #
 #
-# def new_article_topic_analysis(request):
-#     navbar_json = generate_navbar(config.NAV_BAR_ADDRESSES, {"new_article"})
-#     template_context = dict()
-#     template_context["navbar"] = navbar_json
-#     if request.method == "POST":
-#         new_article_form = NewArticleForm(request.POST)
-#         if new_article_form.is_valid():
-#             article_text = new_article_form.cleaned_data["article_text_field"]
-#             article_additional_info = {
-#                 "article_additional_info": [
-#                     {
-#                         "text_row": True,
-#                         "heading": "Text",
-#                         "content": article_text
-#                     }
-#                 ]
-#             }
-#             template_context["text_info"] = article_additional_info
-#             template_context["target_text"] = article_text
-#     else:
-#         new_article_form = NewArticleForm()
-#     template_context["new_article_form"] = new_article_form
-#     return render(request, template_name='p_new_article.html', context=template_context)
+def new_article_topic_analysis(request):
+    template_context = dict()
+    if request.method == "POST":
+        new_article_form = NewArticleForm(request.POST)
+        if new_article_form.is_valid():
+            article_text = new_article_form.cleaned_data["article_text_field"]
+            article_additional_info = {
+                "article_additional_info": [
+                    {
+                        "text_row": True,
+                        "heading": "Text",
+                        "content": article_text
+                    }
+                ]
+            }
+            template_context["text_info"] = article_additional_info
+            template_context["target_text"] = article_text
+    else:
+        new_article_form = NewArticleForm()
+    template_context["new_article_form"] = new_article_form
+    return render(request, template_name='p_new_article.html', context=template_context)
 #
 #
 # def ajax_text_topics(request):

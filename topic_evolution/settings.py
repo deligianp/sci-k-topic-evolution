@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import os
 import datetime
+import os
+
 from topic_evolution.local_settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -28,18 +29,28 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.postgres',
     "crispy_forms",
-    'topic_evolution_visualization'
+    'topic_evolution_visualization',
+    'corsheaders',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# CORS_ORIGIN_WHITELIST = (
+#     'http://localhost:3000',
+#     'http://192.168.2.8:3000'
+# )
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'topic_evolution.urls'
 
@@ -102,5 +113,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 LDA_MODEL_NAME_SYNTAX = r"^.+\.lda$"
 TOP_N_TOPIC_TERMS = 50
+TOP_N_DOCUMENT_TOPICS = 3
+MINIMUM_WORDS_PER_TEXT = 10
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

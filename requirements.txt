@@ -1,4 +1,6 @@
 Django==3.1.5
+djangorestframework==3.12.2
+django-cors-headers==3.6.0
 django-crispy-forms==1.10.0
 gensim==3.8.3
 nltk==3.5
