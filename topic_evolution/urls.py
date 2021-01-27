@@ -19,15 +19,16 @@ from django.urls import path, include
 from rest_framework import routers
 from topic_evolution_visualization import views
 from topic_evolution_visualization.api import urls
+from topic_evolution import settings
 
 from topic_evolution_visualization import urls as topic_evolution_visualization_urls
 
 router = routers.DefaultRouter()
 urlpatterns = [
-    path('', include(topic_evolution_visualization_urls)),
+    path(f'{settings.URL_PREFIX}/', include(topic_evolution_visualization_urls)),
     # path("accounts/", include("django.contrib.auth.urls")),
-    path('accounts/login/', auth_views.LoginView.as_view()),
-    path('admin/', admin.site.urls),
-    path('api/', include(urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path(f'{settings.URL_PREFIX}/accounts/login/', auth_views.LoginView.as_view()),
+    path(f'{settings.URL_PREFIX}/admin/', admin.site.urls),
+    path(f'{settings.URL_PREFIX}/api/', include(urls)),
+    path(f'{settings.URL_PREFIX}/api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
