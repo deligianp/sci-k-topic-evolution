@@ -9,3 +9,10 @@
 
 # pycache
 **/__pycache__/
+
+# Django static
+static/
+
+# Python virtualenv directory
+venv/
+
