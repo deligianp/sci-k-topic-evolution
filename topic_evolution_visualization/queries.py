@@ -71,11 +71,11 @@ def get_topics_terms_representation(parent_model, *topics):
                     "index",
                     "-value"
                 ).values("term", "word", "value")
-
-            result[target_topic] = [
-                {"term": res["term"] or res["word"], "value": res["value"]}
-                for res in query_result
-            ]
+            if len(query_result)>0:
+                result[target_topic] = [
+                    {"term": res["term"] or res["word"], "value": res["value"]}
+                    for res in query_result
+                ]
     return result
 
 
