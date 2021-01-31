@@ -116,11 +116,6 @@ class TopicTermDistribution(models.Model):
 class Comparison(models.Model):
     name = models.CharField(max_length=30, unique=True)
     description = models.CharField(max_length=50)
-    type_of_comparison = models.SmallIntegerField(
-        help_text="A score comparison indicates that the comparison of two topics is a score, meaning that the higher "
-                  "the value, the better. In contrast, a distance comparison of two topics gives a divergence of "
-                  "similarity of the two topics, thus the smaller the value, the better.",
-        choices=((0, "Score comparison"), (1, "Distance comparison")))
     lower_bound = models.FloatField(blank=True, null=True,
                                     help_text="Lowest value of the comparison metric. Leave empty if it cannot be "
                                               "defined")
