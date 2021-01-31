@@ -8,8 +8,8 @@ from topic_evolution_visualization import queries
 @api_view()
 def model_topics(request):
     target_model_name = request.GET.get("name", None)
-    offset = request.GET.get("offset", 0)
-    limit = request.GET.get("limit", 50)
+    offset = int(request.GET.get("offset", 0))
+    limit = int(request.GET.get("limit", 50))
     topic = int(request.GET.get("topic", -1))
     data = dict()
     main_model = queries.get_model(name=target_model_name)
