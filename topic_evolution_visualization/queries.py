@@ -118,8 +118,9 @@ def get_topic_evolution(model, topic):
                             "label": edge["value"]
                         } for edge in topics_comparisons
                     ]
+#                }
                 }
-            ]
+            ] if len(topics_comparisons)>0 else []
         }
     else:
         # other_model = LdaModel.objects.get(id=comparison.lda_model_0).name
