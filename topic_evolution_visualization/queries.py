@@ -1,6 +1,6 @@
 from django.db.models import Q, F
 
-from .models import Topic, LdaModel
+from .models import Topic, LdaModel, Comparison, TopicsComparison
 
 
 def get_model(name=None):
@@ -71,7 +71,7 @@ def get_topics_terms_representation(parent_model, *topics):
                     "index",
                     "-value"
                 ).values("term", "word", "value")
-            if len(query_result)>0:
+            if len(query_result) > 0:
                 result[target_topic] = [
                     {"term": res["term"] or res["word"], "value": res["value"]}
                     for res in query_result
@@ -81,3 +81,76 @@ def get_topics_terms_representation(parent_model, *topics):
 
 def get_models():
     return LdaModel.objects.all().values("name", "description", "training_context")
+
+
+def get_topic_evolution(model, topic):
+    lda_model = LdaModel.objects.get(name=model)
+    comparison = Comparison.objects.filter(Q(lda_model_0=lda_model) | Q(lda_model_1=lda_model)).first()
+    if comparison.lda_model_0 == lda_model:
+        # other_model = LdaModel.objects.get(id=comparison.lda_model_1).name
+        other_model = comparison.lda_model_1.name
+        topics_comparisons = TopicsComparison.objects.filter(
+            parent_comparison=comparison,
+            topic_0__parent_model=lda_model,
+            topic_0__index=topic,
+            value__gte=0.1
+        ).values("topic_1__index", "value")
+        model0_description = lda_model.description
+        model1_description = comparison.lda_model_1.description
+
+        return {
+            "model0_description": model0_description,
+            "model1_description": model1_description,
+            "parents": [
+                {
+                    "name": "topic-{}".format(topic),
+                    "topic": topic,
+                    "modelName": model,
+                    "highlight": True,
+                    "associations": [
+                        {
+                            "child": {
+                                "name": "topic-{}".format(edge["topic_1__index"]),
+                                "highlight": False,
+                                "topic": edge["topic_1__index"],
+                                "modelName": other_model
+                            },
+                            "label": edge["value"]
+                        } for edge in topics_comparisons
+                    ]
+                }
+            ]
+        }
+    else:
+        # other_model = LdaModel.objects.get(id=comparison.lda_model_0).name
+        other_model = comparison.lda_model_0.name
+        topics_comparisons = TopicsComparison.objects.filter(
+            parent_comparison=comparison,
+            topic_1__parent_model=lda_model,
+            topic_1__index=topic,
+            value__gte=0.1
+        ).values("topic_0__index", "topic_1__index", "value")
+
+        model0_description = lda_model.description
+        model1_description = comparison.lda_model_1.description
+        return {
+            "model0_description": model0_description,
+            "model1_description": model1_description,
+            "parents": [
+                {
+                    "name": "topic-{}".format(edge["topic_0__index"]),
+                    "topic": edge["topic_0__index"],
+                    "modelName": other_model,
+                    "highlight": False,
+                    "associations": [
+                        {
+                            "child": {
+                                "name": "topic-{}".format(topic),
+                                "highlight": True,
+                                "topic": topic,
+                                "modelName": model
+                            },
+                            "label": edge["value"]}]
+                } for edge in topics_comparisons
+            ]
+        }

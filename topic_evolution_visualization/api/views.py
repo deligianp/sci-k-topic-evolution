@@ -38,3 +38,18 @@ def analyze_text(request):
     model_name = request.data.get("model_name", None)
     result = lda_query.analyze_text(text, model_name)
     return Response(result)
+
+
+@api_view()
+def topic_evolution(request):
+    model = request.GET.get("name", None)
+    topic = int(request.GET.get("topic", -1))
+    evolution = queries.get_topic_evolution(model, topic)
+    result = {
+        "model": model,
+        "topic": topic,
+        "model0_description": evolution["model0_description"],
+        "model1_description": evolution["model1_description"],
+        "parents": evolution["parents"]
+    }
+    return Response(result)
