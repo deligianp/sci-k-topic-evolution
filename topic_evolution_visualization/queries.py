@@ -9,9 +9,14 @@ def get_model(name=None):
     return LdaModel.objects.filter(is_main=True)[:1].union(LdaModel.objects.all().order_by("pk")[:1]).first()
 
 
-def get_topics_terms_representation(parent_model, *topics):
+def get_number_of_topics(model):
+    return Topic.objects.filter(parent_model=model).count()
+
+
+def get_topics_terms_representation(parent_model, *topics, n_terms=None):
     result = dict()
     if not topics:
+        # Get all terms available for all topics in the given model
         query_result = Topic.objects.filter(
             Q(topictermdistribution__term__original_word__rank=1) |
             Q(topictermdistribution__term__original_word__isnull=True),
@@ -34,6 +39,8 @@ def get_topics_terms_representation(parent_model, *topics):
                     {"term": topic_term["term"] or topic_term["word"], "value": topic_term["value"]}
                 ]
             else:
+                if n_terms and len(result[topic]) >= n_terms:
+                    continue
                 result[topic].append(
                     {"term": topic_term["term"] or topic_term["word"], "value": topic_term["value"]}
                 )
@@ -42,6 +49,7 @@ def get_topics_terms_representation(parent_model, *topics):
             result[topic] = sorted(result[topic], key=lambda td: td["value"], reverse=False)
 
     else:
+        # Get all terms for the topics defined in list argument `topics`
         for target_topic in topics:
             if type(target_topic) is str:
                 query_result = Topic.objects.filter(
@@ -71,6 +79,8 @@ def get_topics_terms_representation(parent_model, *topics):
                     "index",
                     "-value"
                 ).values("term", "word", "value")
+            if n_terms:
+                query_result = query_result[:n_terms]
             if len(query_result) > 0:
                 result[target_topic] = [
                     {"term": res["term"] or res["word"], "value": res["value"]}
@@ -118,9 +128,8 @@ def get_topic_evolution(model, topic):
                             "label": edge["value"]
                         } for edge in topics_comparisons
                     ]
-#                }
                 }
-            ] if len(topics_comparisons)>0 else []
+            ]
         }
     else:
         # other_model = LdaModel.objects.get(id=comparison.lda_model_0).name
